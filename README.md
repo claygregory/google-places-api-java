@@ -1,6 +1,6 @@
 #Google Places API - Java
 
-This is just a lightweight wrapper of teh Google Places API for Java. Currently only the search action is supported.
+This is just a lightweight wrapper of the Google Places API for Java. Currently only the search action is supported.
 
 ##Example Usage
 ```
