@@ -56,9 +56,7 @@ public class GooglePlaces {
 			if ( options != null )
 				for ( String param : options.params( ).keySet( ) )
 					builder.queryParam( param, options.param( param ) );
-			
-			System.out.println( builder.buildURL( ));
-			
+						
 			HttpGet get = new HttpGet( builder.buildURL( ).toString( ) );
 			return this.parseResponse( this.client.execute( get ) );
 			
