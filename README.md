@@ -15,3 +15,7 @@ for ( Place place : result )
 ##Dependencies
  * [Apache HttpClient 4.2](http://hc.apache.org/)
  * [cg-jcommons](https://github.com/claygregory/cg-jcommons)
+
+##Binary Download
+ * [Latest JAR](http://www.claygregory.com/projects/google-places-api-java/releases/0.1-SNAPSHOT/google-places-api-java-0.1-SNAPSHOT.jar)
+ * [Latest JAR with dependencies](http://www.claygregory.com/projects/google-places-api-java/releases/0.1-SNAPSHOT/google-places-api-java-0.1-SNAPSHOT-jar-with-dependencies.jar)
