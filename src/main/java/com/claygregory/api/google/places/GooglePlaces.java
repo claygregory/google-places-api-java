@@ -20,6 +20,8 @@ public class GooglePlaces {
 	
 	private static final int DEFAULT_RADIUS = 500;
 	
+	private static final String AUTOCOMPLETE_URL = "https://maps.googleapis.com/maps/api/place/autocomplete/json";
+	
 	private static final String DETAIL_URL = "https://maps.googleapis.com/maps/api/place/details/json";
 	
 	private static final String PHOTO_URL = "https://maps.googleapis.com/maps/api/place/photo";
@@ -45,13 +47,40 @@ public class GooglePlaces {
 		
 		this.client = client;
 	}
+
+	private AutocompleteResult parseAutocompleteResponse( HttpResponse response ) throws IOException {
+		return this.gson.fromJson( new InputStreamReader( response.getEntity( ).getContent( ) ), AutocompleteResult.class );
+	}
+	
+	private PlaceDetailResult parseDetailResponse( HttpResponse response ) throws IOException {
+		return this.gson.fromJson( new InputStreamReader( response.getEntity( ).getContent( ) ), PlaceDetailResult.class );
+	}
 	
 	private PlacesResult parseSearchResponse( HttpResponse response ) throws IOException {
 		return this.gson.fromJson( new InputStreamReader( response.getEntity( ).getContent( ) ), PlacesResult.class );
 	}
 	
-	private PlaceDetailResult parseDetailResponse( HttpResponse response ) throws IOException {
-		return this.gson.fromJson( new InputStreamReader( response.getEntity( ).getContent( ) ), PlaceDetailResult.class );
+	public AutocompleteResult autocomplete( String input, boolean sensor ) {
+		return autocomplete( input, null, sensor );
+	}
+	
+	public AutocompleteResult autocomplete( String input, AutocompleteQueryOptions options, boolean sensor ) {
+		try {
+			URLBuilder builder = URLBuilder.create( AUTOCOMPLETE_URL )
+				.queryParam( "key", this.apikey )
+				.queryParam( "input", input )
+				.queryParam( "sensor", String.valueOf( sensor ) );
+			
+			if ( options != null )
+				for ( String param : options.params( ).keySet( ) )
+					builder.queryParam( param, options.param( param ) );
+						
+			HttpGet get = new HttpGet( builder.buildURL( ).toString( ) );
+			return this.parseAutocompleteResponse( this.client.execute( get ) );
+			
+		} catch( Exception e ) {
+			throw new PlacesException( e );
+		}
 	}
 	
 	public PlaceDetailResult detail( String reference, boolean sensor ) {
