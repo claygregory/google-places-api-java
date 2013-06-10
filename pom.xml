@@ -5,7 +5,7 @@
 
 	<groupId>com.claygregory</groupId>
 	<artifactId>google-places-api-java</artifactId>
-	<version>0.1-SNAPSHOT</version>
+	<version>0.2-SNAPSHOT</version>
 	<name>google-places-api-java</name>
 	<url>https://github.com/claygregory/google-places-api-java</url>
 
