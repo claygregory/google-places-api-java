@@ -33,7 +33,8 @@ for ( Prediction p : result )
 ```
 
 ##Dependencies
- * [Apache HttpClient 4.2](http://hc.apache.org/)
+ * [Apache HttpClient](http://hc.apache.org/)
+ * [GSON](http://code.google.com/p/google-gson/)
  * [cg-jcommons](https://github.com/claygregory/cg-jcommons)
 
 ##Binary Download
