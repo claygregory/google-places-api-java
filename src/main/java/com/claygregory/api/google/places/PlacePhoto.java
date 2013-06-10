@@ -1,12 +1,13 @@
 package com.claygregory.api.google.places;
 
+import java.util.Collections;
 import java.util.List;
 
 public class PlacePhoto {
 
 	private int height;
 	
-	private List<String> htmlAttributions;
+	private List<String> htmlAttributions = Collections.emptyList( );
 	
 	private String photoReference;
 	
