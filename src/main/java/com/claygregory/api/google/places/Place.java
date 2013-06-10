@@ -1,5 +1,6 @@
 package com.claygregory.api.google.places;
 
+import java.util.Collections;
 import java.util.Set;
 
 import com.claygregory.common.data.geo.GeoLocation;
@@ -63,7 +64,7 @@ public class Place {
 	
 	private String reference;
 
-	private Set<String> types;
+	private Set<String> types = Collections.emptySet( );
 
 	private String url;
 

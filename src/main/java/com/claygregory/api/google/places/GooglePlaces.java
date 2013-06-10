@@ -1,6 +1,7 @@
 package com.claygregory.api.google.places;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.http.HttpResponse;
@@ -19,6 +20,10 @@ public class GooglePlaces {
 	
 	private static final int DEFAULT_RADIUS = 500;
 	
+	private static final String DETAIL_URL = "https://maps.googleapis.com/maps/api/place/details/json";
+	
+	private static final String PHOTO_URL = "https://maps.googleapis.com/maps/api/place/photo";
+	
 	private static final String SEARCH_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
 
 	private String apikey;
@@ -28,17 +33,57 @@ public class GooglePlaces {
 	private Gson gson;
 	
 	public GooglePlaces( String apikey ) {
+		this( new DefaultHttpClient( ), apikey );
+	}
+	
+	public GooglePlaces( HttpClient client, String apikey ) {
 		this.apikey = apikey;
 		
 		GsonBuilder gb = new GsonBuilder( );
 		gb.setFieldNamingPolicy( FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES );
 		this.gson = gb.create( );
 		
-		this.client = new DefaultHttpClient( );
+		this.client = client;
 	}
 	
-	private PlacesResult parseResponse( HttpResponse response ) throws IOException {
+	private PlacesResult parseSearchResponse( HttpResponse response ) throws IOException {
 		return this.gson.fromJson( new InputStreamReader( response.getEntity( ).getContent( ) ), PlacesResult.class );
+	}
+	
+	private PlaceDetailResult parseDetailResponse( HttpResponse response ) throws IOException {
+		return this.gson.fromJson( new InputStreamReader( response.getEntity( ).getContent( ) ), PlaceDetailResult.class );
+	}
+	
+	public PlaceDetailResult detail( String reference, boolean sensor ) {
+		try {
+			URLBuilder builder = URLBuilder.create( DETAIL_URL )
+				.queryParam( "key", this.apikey )
+				.queryParam( "reference", reference )
+				.queryParam( "sensor", String.valueOf( sensor ) );
+								
+			HttpGet get = new HttpGet( builder.buildURL( ).toString( ) );
+			return this.parseDetailResponse( this.client.execute( get ) );
+			
+		} catch( Exception e ) {
+			throw new PlacesException( e );
+		}
+	}
+
+	public URL photoUrl( String photoReference, Integer maxHeight, Integer maxWidth, boolean sensor ) {
+		
+		try {
+			
+			return URLBuilder.create( PHOTO_URL )
+				.queryParam( "key", this.apikey )
+				.queryParam( "photoreference", photoReference )
+				.queryParam( "sensor", String.valueOf( sensor ) )
+				.queryParam( "maxheight", maxHeight != null ? String.valueOf( maxHeight ) : null )
+				.queryParam( "maxwidth", maxWidth != null ? String.valueOf( maxWidth ) : null )
+				.buildURL( );
+			
+		} catch( MalformedURLException e ) {
+			throw new PlacesException( e );
+		}
 	}
 	
 	public PlacesResult search( float lat, float lon, int radius, boolean sensor ) {
@@ -58,7 +103,7 @@ public class GooglePlaces {
 					builder.queryParam( param, options.param( param ) );
 						
 			HttpGet get = new HttpGet( builder.buildURL( ).toString( ) );
-			return this.parseResponse( this.client.execute( get ) );
+			return this.parseSearchResponse( this.client.execute( get ) );
 			
 		} catch( Exception e ) {
 			throw new PlacesException( e );
@@ -83,7 +128,7 @@ public class GooglePlaces {
 					.buildURL( );
 			
 			HttpGet get = new HttpGet( url.toString( ) );
-			return this.parseResponse( this.client.execute( get ) );
+			return this.parseSearchResponse( this.client.execute( get ) );
 			
 		} catch( Exception e ) {
 			throw new PlacesException( e );
