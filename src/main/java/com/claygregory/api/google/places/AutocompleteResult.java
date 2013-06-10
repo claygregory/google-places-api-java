@@ -5,6 +5,8 @@ import java.util.List;
 
 
 public class AutocompleteResult implements Iterable<Prediction> {
+	
+	private static final String OKAY_STATUS = "OK";
 
 	private List<Prediction> predictions;
 	
@@ -12,6 +14,10 @@ public class AutocompleteResult implements Iterable<Prediction> {
 	
 	public String getStatus( ) {
 		return this.status;
+	}
+	
+	public boolean isOkay( ) {
+		return OKAY_STATUS.equals( this.getStatus( ) );
 	}
 	
 	@Override

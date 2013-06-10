@@ -7,6 +7,8 @@ import java.util.List;
 
 public class PlacesResult implements Iterable<Place> {
 	
+	private static final String OKAY_STATUS = "OK";
+	
 	private String nextPageToken;
 
 	private List<Place> results;
@@ -23,6 +25,10 @@ public class PlacesResult implements Iterable<Place> {
 	
 	public String getStatus( ) {
 		return this.status;
+	}
+
+	public boolean isOkay( ) {
+		return OKAY_STATUS.equals( this.getStatus( ) );
 	}
 	
 	@Override

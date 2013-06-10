@@ -4,6 +4,8 @@ import java.util.List;
 
 public class PlaceDetailResult {
 	
+	private static final String OKAY_STATUS = "OK";
+	
 	private List<String> htmlAttributions;
 
 	private PlaceDetail result;
@@ -22,5 +24,7 @@ public class PlaceDetailResult {
 		return this.status;
 	}
 	
-	
+	public boolean isOkay( ) {
+		return OKAY_STATUS.equals( this.getStatus( ) );
+	}
 }
