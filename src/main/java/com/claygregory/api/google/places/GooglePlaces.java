@@ -7,7 +7,7 @@ import java.net.URL;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 import com.claygregory.common.data.geo.GeoLocation;
 import com.claygregory.common.net.URLBuilder;
@@ -35,7 +35,7 @@ public class GooglePlaces {
 	private Gson gson;
 	
 	public GooglePlaces( String apikey ) {
-		this( new DefaultHttpClient( ), apikey );
+		this( HttpClientBuilder.create().useSystemProperties().build(), apikey );
 	}
 	
 	public GooglePlaces( HttpClient client, String apikey ) {
