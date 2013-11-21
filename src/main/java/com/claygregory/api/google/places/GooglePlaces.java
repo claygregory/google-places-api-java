@@ -4,7 +4,6 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import com.sun.deploy.util.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -12,6 +11,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 
 import com.claygregory.common.data.geo.GeoLocation;
 import com.claygregory.common.net.URLBuilder;
+import com.claygregory.common.util.StringUtil;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -175,7 +175,7 @@ public class GooglePlaces {
                     .queryParam("query", query)
                     .queryParam("sensor", String.valueOf(sensor));
 
-            if (types.length() > 0) {
+            if (StringUtil.empty( types ) ) {
                 urlbuilder.queryParam( "types", types);
             }
 
