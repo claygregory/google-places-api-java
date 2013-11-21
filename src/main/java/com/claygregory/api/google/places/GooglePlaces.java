@@ -4,6 +4,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import com.sun.deploy.util.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -27,6 +28,8 @@ public class GooglePlaces {
 	private static final String PHOTO_URL = "https://maps.googleapis.com/maps/api/place/photo";
 	
 	private static final String SEARCH_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
+
+    private static final String TEXT_SEARCH_URL = "https://maps.googleapis.com/maps/api/place/textsearch/json";
 
 	private String apikey;
 	
@@ -163,4 +166,33 @@ public class GooglePlaces {
 			throw new PlacesException( e );
 		}	
 	}
+
+    public PlacesResult searchText( String query, String types, boolean sensor) {
+
+        try {
+            URLBuilder urlbuilder = URLBuilder.create(TEXT_SEARCH_URL)
+                    .queryParam( "key", this.apikey )
+                    .queryParam("query", query)
+                    .queryParam("sensor", String.valueOf(sensor));
+
+            if (types.length() > 0) {
+                urlbuilder.queryParam( "types", types);
+            }
+
+             URL url = urlbuilder.buildURL( );
+
+            HttpGet get = new HttpGet( url.toString( ) );
+            return this.parseSearchResponse( this.client.execute( get ) );
+
+        } catch( Exception e ) {
+            throw new PlacesException( e );
+        }
+
+    }
+
+    public PlacesResult searchText( String query, boolean sensor) {
+
+        return searchText(query, "", sensor);
+
+    }
 }
