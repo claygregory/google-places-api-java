@@ -175,7 +175,7 @@ public class GooglePlaces {
                     .queryParam("query", query)
                     .queryParam("sensor", String.valueOf(sensor));
 
-            if (StringUtil.empty( types ) ) {
+            if (!StringUtil.empty( types ) ) {
                 urlbuilder.queryParam( "types", types);
             }
 
