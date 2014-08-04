@@ -4,9 +4,7 @@ import java.net.URL;
 import java.util.Date;
 import java.util.List;
 
-import com.claygregory.common.data.TimestampedEvent;
-
-public class Review implements TimestampedEvent {
+public class Review {
 
 	private List<AspectRating> aspects;
 	
@@ -38,13 +36,7 @@ public class Review implements TimestampedEvent {
 		return this.time;
 	}
 
-	@Override
-	public long getTimestamp( ) {
-		return this.getTime( );
-	}
-
-	@Override
-	public Date getTimestampAsDate( ) {
+	public Date getTimeAsDate( ) {
 		return new Date( this.getTime( ) );
 	}
 }

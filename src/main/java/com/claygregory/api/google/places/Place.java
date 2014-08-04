@@ -3,8 +3,6 @@ package com.claygregory.api.google.places;
 import java.util.Collections;
 import java.util.Set;
 
-import com.claygregory.common.data.geo.GeoLocation;
-
 public class Place {
 	
 	public static class Geometry {
@@ -22,30 +20,23 @@ public class Place {
 		
 	}
 	
-	public static class Location implements GeoLocation {
+	public static class Location {
 		
 		private float lat;
 
 		private float lng;
 
-		@Override
-		public Integer getAccuracy( ) {
-			return null;
-		}
-
-		@Override
-		public float getLatitude( ) {
+		public float getLat( ) {
 			return this.lat;
 		}
 
-		@Override
-		public float getLongitude( ) {
+		public float getLng( ) {
 			return this.lng;
 		}
 		
 		@Override
 		public String toString( ) {
-			return this.getLatitude( ) + ", " + this.getLongitude( );
+			return this.getLat( ) + ", " + this.getLng( );
 		}
 		
 	}
@@ -59,6 +50,8 @@ public class Place {
 	private String id;
 	
 	private String name;
+	
+	private String placeId;
 	
 	private Float rating;
 	
@@ -82,6 +75,7 @@ public class Place {
 		return this.icon;
 	}
 
+	@Deprecated
 	public String getId( ) {
 		return this.id;
 	}
@@ -90,10 +84,15 @@ public class Place {
 		return this.name;
 	}
 
+	public String getPlaceId( ) {
+		return this.placeId;
+	}
+
 	public Float getRating( ) {
 		return this.rating;
 	}
 
+	@Deprecated
 	public String getReference( ) {
 		return this.reference;
 	}

@@ -4,15 +4,23 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.claygregory.common.util.StringUtil;
+import com.claygregory.api.google.places.Place.Location;
 
 public class PlacesQueryOptions {
 	
-	private static final String KEYWORD = "keyword";
+	protected static final String KEYWORD = "keyword";
 	
-	private static final String NAME = "name";
+	protected static final String LANGUAGE = "language";
 	
-	private static final String TYPES = "types";
+	protected static final String LOCATION = "location";
+	
+	protected static final String NAME = "name";
+	
+	protected static final String RADIUS = "radius";
+	
+	protected static final String SENSOR = "sensor";
+	
+	protected static final String TYPES = "types";
 
 	private Map<String,String> params = new HashMap<String,String>( );
 	
@@ -22,6 +30,18 @@ public class PlacesQueryOptions {
 	
 	public PlacesQueryOptions keyword( String keyword ) {
 		return this.param( KEYWORD, keyword );
+	}
+	
+	public PlacesQueryOptions language( String language ) {
+		return this.param( LANGUAGE, language );
+	}
+	
+	public PlacesQueryOptions location( Location location ) {
+		return this.location( location.getLat( ), location.getLng( ) );
+	}
+	
+	public PlacesQueryOptions location( float lat, float lon ) {
+		return this.param( LOCATION, lat + "," + lon );
 	}
 	
 	public PlacesQueryOptions name( String name ) {
@@ -41,7 +61,21 @@ public class PlacesQueryOptions {
 		return Collections.unmodifiableMap( this.params );
 	}
 	
+	public PlacesQueryOptions radius( int radius ) {
+		return this.param( RADIUS, String.valueOf( radius ) );
+	}
+	
+	public PlacesQueryOptions sensor( boolean sensor ) {
+		return this.param( SENSOR, String.valueOf( sensor ) );
+	}
+	
 	public PlacesQueryOptions types( String... types ) {
-		return this.param( TYPES, StringUtil.join( "|", types ) );
+		StringBuilder typesString = new StringBuilder( );
+		for ( String type : types ) {
+			if ( typesString.length( ) != 0 ) typesString.append( '|' );
+			typesString.append(type );
+		}
+			
+		return this.param( TYPES, typesString.toString( ) );
 	}
 }

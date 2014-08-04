@@ -14,6 +14,8 @@ public class PlaceDetail extends Place {
 	
 	private String internationalPhoneNumber;
 	
+	private OpeningHours openingHours;
+	
 	private List<PlacePhoto> photos = Collections.emptyList( );
 
 	private Integer priceLevel;
@@ -38,6 +40,10 @@ public class PlaceDetail extends Place {
 
 	public String getInternationalPhoneNumber( ) {
 		return this.internationalPhoneNumber;
+	}
+	
+	public OpeningHours getOpeningHours( ) {
+		return this.openingHours;
 	}
 
 	public List<PlacePhoto> getPhotos( ) {

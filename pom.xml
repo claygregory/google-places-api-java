@@ -5,7 +5,7 @@
 
 	<groupId>com.claygregory</groupId>
 	<artifactId>google-places-api-java</artifactId>
-	<version>0.2-SNAPSHOT</version>
+	<version>0.3-SNAPSHOT</version>
 	<name>google-places-api-java</name>
 	<url>https://github.com/claygregory/google-places-api-java</url>
 
@@ -48,15 +48,9 @@
 	
 	<dependencies>
 		<dependency>
-			<groupId>com.claygregory</groupId>
-			<artifactId>cg-jcommons</artifactId>
-			<version>0.2-SNAPSHOT</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>4.3.1</version>
+			<version>4.3.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>

@@ -11,6 +11,8 @@ public class Prediction {
 	
 	private List<MatchedSubstring> matchedSubstrings;
 	
+	private String placeId;
+	
 	private String reference;
 	
 	private List<Term> terms;
@@ -21,6 +23,7 @@ public class Prediction {
 		return this.description;
 	}
 
+	@Deprecated
 	public String getId( ) {
 		return this.id;
 	}
@@ -29,6 +32,11 @@ public class Prediction {
 		return this.matchedSubstrings;
 	}
 
+	public String getPlaceId( ) {
+		return this.placeId;
+	}
+
+	@Deprecated
 	public String getReference( ) {
 		return this.reference;
 	}

@@ -2,16 +2,16 @@ package com.claygregory.api.google.places;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.HttpClientBuilder;
 
-import com.claygregory.common.data.geo.GeoLocation;
-import com.claygregory.common.net.URLBuilder;
-import com.claygregory.common.util.StringUtil;
+import com.claygregory.api.google.places.Place.Location;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -19,15 +19,13 @@ import com.google.gson.GsonBuilder;
 
 public class GooglePlaces {
 	
-	private static final int DEFAULT_RADIUS = 500;
-	
 	private static final String AUTOCOMPLETE_URL = "https://maps.googleapis.com/maps/api/place/autocomplete/json";
 	
 	private static final String DETAIL_URL = "https://maps.googleapis.com/maps/api/place/details/json";
 	
 	private static final String PHOTO_URL = "https://maps.googleapis.com/maps/api/place/photo";
 	
-	private static final String SEARCH_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
+	private static final String NEARBY_SEARCH_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
 
     private static final String TEXT_SEARCH_URL = "https://maps.googleapis.com/maps/api/place/textsearch/json";
 
@@ -38,7 +36,7 @@ public class GooglePlaces {
 	private Gson gson;
 	
 	public GooglePlaces( String apikey ) {
-		this( HttpClientBuilder.create().useSystemProperties().build(), apikey );
+		this( HttpClientBuilder.create( ).useSystemProperties( ).build( ), apikey );
 	}
 	
 	public GooglePlaces( HttpClient client, String apikey ) {
@@ -63,22 +61,21 @@ public class GooglePlaces {
 		return this.gson.fromJson( new InputStreamReader( response.getEntity( ).getContent( ) ), PlacesResult.class );
 	}
 	
-	public AutocompleteResult autocomplete( String input, boolean sensor ) {
-		return autocomplete( input, null, sensor );
+	public AutocompleteResult autocomplete( String input ) {
+		return autocomplete( input, null );
 	}
 	
-	public AutocompleteResult autocomplete( String input, AutocompleteQueryOptions options, boolean sensor ) {
+	public AutocompleteResult autocomplete( String input, PlacesQueryOptions options ) {
 		try {
-			URLBuilder builder = URLBuilder.create( AUTOCOMPLETE_URL )
-				.queryParam( "key", this.apikey )
-				.queryParam( "input", input )
-				.queryParam( "sensor", String.valueOf( sensor ) );
+			URIBuilder url = new URIBuilder( AUTOCOMPLETE_URL );
+			url.addParameter( "key", this.apikey );
+			url.addParameter( "input", input );
 			
 			if ( options != null )
 				for ( String param : options.params( ).keySet( ) )
-					builder.queryParam( param, options.param( param ) );
+					url.addParameter( param, options.param( param ) );
 						
-			HttpGet get = new HttpGet( builder.buildURL( ).toString( ) );
+			HttpGet get = new HttpGet( url.build( ) );
 			return this.parseAutocompleteResponse( this.client.execute( get ) );
 			
 		} catch( Exception e ) {
@@ -86,14 +83,29 @@ public class GooglePlaces {
 		}
 	}
 	
+	public PlaceDetailResult detail( String placeId ) {
+		try {
+			URIBuilder url = new URIBuilder( DETAIL_URL );
+			url.addParameter( "key", this.apikey );
+			url.addParameter( "placeid", placeId );
+								
+			HttpGet get = new HttpGet( url.build( ) );
+			return this.parseDetailResponse( this.client.execute( get ) );
+			
+		} catch( Exception e ) {
+			throw new PlacesException( e );
+		}
+	}
+	
+	@Deprecated
 	public PlaceDetailResult detail( String reference, boolean sensor ) {
 		try {
-			URLBuilder builder = URLBuilder.create( DETAIL_URL )
-				.queryParam( "key", this.apikey )
-				.queryParam( "reference", reference )
-				.queryParam( "sensor", String.valueOf( sensor ) );
+			URIBuilder url = new URIBuilder( DETAIL_URL );
+			url.addParameter( "key", this.apikey );
+			url.addParameter( "reference", reference );
+			url.addParameter( "sensor", String.valueOf( sensor ) );
 								
-			HttpGet get = new HttpGet( builder.buildURL( ).toString( ) );
+			HttpGet get = new HttpGet( url.build( ) );
 			return this.parseDetailResponse( this.client.execute( get ) );
 			
 		} catch( Exception e ) {
@@ -101,40 +113,41 @@ public class GooglePlaces {
 		}
 	}
 
-	public URL photoUrl( String photoReference, Integer maxHeight, Integer maxWidth, boolean sensor ) {
+	public URL photoUrl( String photoReference, Integer maxHeight, Integer maxWidth ) {
 		
 		try {
 			
-			return URLBuilder.create( PHOTO_URL )
-				.queryParam( "key", this.apikey )
-				.queryParam( "photoreference", photoReference )
-				.queryParam( "sensor", String.valueOf( sensor ) )
-				.queryParam( "maxheight", maxHeight != null ? String.valueOf( maxHeight ) : null )
-				.queryParam( "maxwidth", maxWidth != null ? String.valueOf( maxWidth ) : null )
-				.buildURL( );
+			URIBuilder url = new URIBuilder( PHOTO_URL );
+			url.addParameter( "key", this.apikey );
+			url.addParameter( "photoreference", photoReference );
+			url.addParameter( "maxheight", maxHeight != null ? String.valueOf( maxHeight ) : null );
+			url.addParameter( "maxwidth", maxWidth != null ? String.valueOf( maxWidth ) : null );
+			
+			return url.build( ).toURL( );
 			
 		} catch( MalformedURLException e ) {
+			throw new PlacesException( e );
+		} catch( URISyntaxException e ) {
 			throw new PlacesException( e );
 		}
 	}
 	
-	public PlacesResult search( float lat, float lon, int radius, boolean sensor ) {
-		return search( lat, lon, radius, null, sensor );
+	public PlacesResult searchNearby( float lat, float lon, int radius ) {
+		return searchNearby( lat, lon, radius, null );
 	}
 	
-	public PlacesResult search( float lat, float lon, int radius, PlacesQueryOptions options, boolean sensor ) {
+	public PlacesResult searchNearby( float lat, float lon, int radius, PlacesQueryOptions options ) {
 		try {
-			URLBuilder builder = URLBuilder.create( SEARCH_URL )
-				.queryParam( "key", this.apikey )
-				.queryParam( "location", lat + "," + lon )
-				.queryParam( "radius", String.valueOf( radius ) )
-				.queryParam( "sensor", String.valueOf( sensor ) );
-			
+			URIBuilder url = new URIBuilder( NEARBY_SEARCH_URL );
+			url.addParameter( "key", this.apikey );
+			url.addParameter( PlacesQueryOptions.LOCATION, lat + "," + lon );
+			url.addParameter( PlacesQueryOptions.RADIUS, String.valueOf( radius ) );
+						
 			if ( options != null )
 				for ( String param : options.params( ).keySet( ) )
-					builder.queryParam( param, options.param( param ) );
+					url.addParameter( param, options.param( param ) );
 						
-			HttpGet get = new HttpGet( builder.buildURL( ).toString( ) );
+			HttpGet get = new HttpGet( url.build( ) );
 			return this.parseSearchResponse( this.client.execute( get ) );
 			
 		} catch( Exception e ) {
@@ -142,24 +155,22 @@ public class GooglePlaces {
 		}
 	}
 	
-	public PlacesResult search( GeoLocation location, boolean sensor ) {
-		return this.search( location, null, sensor );
+	public PlacesResult searchNearby( Location location, int radius ) {
+		return this.searchNearby( location, radius, null );
 	}
 	
-	public PlacesResult search( GeoLocation location, PlacesQueryOptions options, boolean sensor ) {
-		return this.search( location.getLatitude( ), location.getLongitude( ), location.getAccuracy( ) != null ? location.getAccuracy( ) : DEFAULT_RADIUS, options, sensor );
+	public PlacesResult searchNearby( Location location, int radius, PlacesQueryOptions options ) {
+		return this.searchNearby( location.getLat( ), location.getLng( ), radius, options );
 	}
 	
-	public PlacesResult search( String pageToken, boolean sensor ) {
+	public PlacesResult searchNearby( String pageToken ) {
 		
 		try {
-			URL url = URLBuilder.create( SEARCH_URL )
-					.queryParam( "key", this.apikey )
-					.queryParam( "pagetoken", pageToken )
-					.queryParam( "sensor", String.valueOf( sensor ) )
-					.buildURL( );
-			
-			HttpGet get = new HttpGet( url.toString( ) );
+			URIBuilder url = new URIBuilder( NEARBY_SEARCH_URL );
+			url.addParameter( "key", this.apikey );
+			url.addParameter( "pagetoken", pageToken );
+
+			HttpGet get = new HttpGet( url.build( ) );
 			return this.parseSearchResponse( this.client.execute( get ) );
 			
 		} catch( Exception e ) {
@@ -167,32 +178,27 @@ public class GooglePlaces {
 		}	
 	}
 
-    public PlacesResult searchText( String query, String types, boolean sensor) {
+    public PlacesResult searchText( String query ) {
+        return searchText( query, null );
+    }
+
+    public PlacesResult searchText( String query, PlacesQueryOptions options ) {
 
         try {
-            URLBuilder urlbuilder = URLBuilder.create(TEXT_SEARCH_URL)
-                    .queryParam( "key", this.apikey )
-                    .queryParam("query", query)
-                    .queryParam("sensor", String.valueOf(sensor));
+        	URIBuilder url = new URIBuilder( TEXT_SEARCH_URL );
+        	url.addParameter( "key", this.apikey );
+        	url.addParameter( "query", query );
 
-            if (!StringUtil.empty( types ) ) {
-                urlbuilder.queryParam( "types", types);
-            }
+        	if ( options != null )
+				for ( String param : options.params( ).keySet( ) )
+					url.addParameter( param, options.param( param ) );
 
-             URL url = urlbuilder.buildURL( );
-
-            HttpGet get = new HttpGet( url.toString( ) );
+            HttpGet get = new HttpGet( url.build( ) );
             return this.parseSearchResponse( this.client.execute( get ) );
 
         } catch( Exception e ) {
             throw new PlacesException( e );
         }
-
-    }
-
-    public PlacesResult searchText( String query, boolean sensor) {
-
-        return searchText(query, "", sensor);
 
     }
 }

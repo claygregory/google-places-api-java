@@ -4,21 +4,9 @@ import java.util.Iterator;
 import java.util.List;
 
 
-public class AutocompleteResult implements Iterable<Prediction> {
+public class AutocompleteResult extends Result implements Iterable<Prediction> {
 	
-	private static final String OKAY_STATUS = "OK";
-
 	private List<Prediction> predictions;
-	
-	private String status;
-	
-	public String getStatus( ) {
-		return this.status;
-	}
-	
-	public boolean isOkay( ) {
-		return OKAY_STATUS.equals( this.getStatus( ) );
-	}
 	
 	@Override
 	public Iterator<Prediction> iterator( ) {

@@ -3,9 +3,7 @@ package com.claygregory.api.google.places;
 import java.net.URL;
 import java.util.Date;
 
-import com.claygregory.common.data.TimestampedEvent;
-
-public class PlaceEvent implements TimestampedEvent {
+public class PlaceEvent {
 
 	private String eventId;
 	
@@ -27,14 +25,8 @@ public class PlaceEvent implements TimestampedEvent {
 		return this.summary;
 	}
 
-	@Override
-	public long getTimestamp( ) {
-		return this.getStartTime( );
-	}
-
-	@Override
-	public Date getTimestampAsDate( ) {
-		return new Date( this.getTimestamp( ) );
+	public Date getStartTimeAsDate( ) {
+		return new Date( this.getStartTime( ) );
 	}
 
 	public URL getUrl( ) {

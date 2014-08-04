@@ -1,32 +1,39 @@
 #Google Places API - Java
 
-This is just a lightweight wrapper of the Google Places API for Java. Currently only query actions (search, detail, autocomplete) are supported.
+This is a lightweight Java wrapper of the Google Places API supporting common query actions including search, detail, and autocomplete.
 
 ##Example Usage
 
-###Search
-```
+###Search Nearby
+```java
 GooglePlaces places = new GooglePlaces( "API_KEY" );
-PlacesResult result = places.search( 40.10744f, -88.22724f, 5000, PlacesQueryOptions.create( ).keyword( "siebel center" ), false );
+PlacesResult result = places.searchNearby( 40.10744f, -88.22724f, 5000, PlacesQueryOptions.create( ).keyword( "siebel center" ) );
 		
 System.out.println( result.getStatus( ) );
 for ( Place place : result )
 	System.out.println( place.getName( ) + " " + place.getGeometry( ).getLocation( ) );
 ```
 
-###Detail
-```
+###Search Text
+```java
 GooglePlaces places = new GooglePlaces( "API_KEY" );
-PlaceDetailResult result = places.detail( "CpQBigAAANDSVGDvi95...",  false );
-		
-if ( result.isOkay( ) )
-	System.out.println( result.getResult( ).getFormattedAddress( ) );
+PlacesResult result = places.searchText( "Pizza in Champaign, IL" );
+
+System.out.println( result.getStatus( ) );
+for ( Place place : result )
+	System.out.println( place.getName( ) + ", " + place.getFormattedAddress( ) );
+```
+
+###Detail
+```java
+GooglePlaces places = new GooglePlaces( "API_KEY" );
+PlaceDetailResult result = places.detail( place.getPlaceId( ) );
 ```
 
 ###Autocomplete
-```
+```java
 GooglePlaces places = new GooglePlaces( "API_KEY" );
-AutocompleteResult result = places.autocomplete( "Siebel Ce",  false );
+AutocompleteResult result = places.autocomplete( "Siebel Ce" );
 		
 for ( Prediction p : result )
 	System.out.println( p.getDescription( ) );
@@ -35,9 +42,7 @@ for ( Prediction p : result )
 ##Dependencies
  * [Apache HttpClient](http://hc.apache.org/)
  * [GSON](http://code.google.com/p/google-gson/)
- * [cg-jcommons](https://github.com/claygregory/cg-jcommons)
 
-##Binary Download
- * [Latest JAR](http://www.claygregory.com/projects/google-places-api-java/releases/0.2-SNAPSHOT/google-places-api-java-0.2-SNAPSHOT.jar)
- * [Latest JAR with dependencies](http://www.claygregory.com/projects/google-places-api-java/releases/0.2-SNAPSHOT/google-places-api-java-0.2-SNAPSHOT-jar-with-dependencies.jar)
- 
+##Downloads
+
+Source is hosted on [GitHub](https://github.com/claygregory/google-places-api-java).
