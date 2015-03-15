@@ -43,6 +43,10 @@ for ( Prediction p : result )
  * [Apache HttpClient](http://hc.apache.org/)
  * [GSON](http://code.google.com/p/google-gson/)
 
+##License
+
+See the [LICENSE](LICENSE.md) file for rights and limitations under the terms of the MIT license.
+
 ##Downloads
 
 Source is hosted on [GitHub](https://github.com/claygregory/google-places-api-java).
